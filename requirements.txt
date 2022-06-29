@@ -1,2 +1,5 @@
 Django==4.0.5
 psycopg2==2.9.3
+Requests==2.28.1
+fake_user_agent==0.0.15
+beautifulsoup4==4.11.1
