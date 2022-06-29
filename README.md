@@ -1,0 +1,1 @@
+# Pikabu only text posts
