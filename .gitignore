@@ -1,3 +1,7 @@
-Pikabu_light/db_conn.py
+db_conn.py
 Pikabu_light/db.sqlite3
 /Pikabu_light/Pikabu_light/secret_key.py
+/pyvenv.cfg
+/Lib/
+/Scripts/
+/.idea/workspace.xml

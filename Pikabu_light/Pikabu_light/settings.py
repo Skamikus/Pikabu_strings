@@ -78,11 +78,11 @@ WSGI_APPLICATION = 'Pikabu_light.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Pikabu_light',
+        'NAME': db_conn.db,
         'USER': db_conn.user,
-        'PASSWORD': db_conn.my_password_to_db,
+        'PASSWORD': db_conn.password,
         'HOST': 'localhost',
-        'PORT': '5050',
+        'PORT': '5432',
     }
 }
 
