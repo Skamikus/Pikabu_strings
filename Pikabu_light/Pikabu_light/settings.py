@@ -81,8 +81,8 @@ DATABASES = {
         'NAME': db_conn.db,
         'USER': db_conn.user,
         'PASSWORD': db_conn.password,
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'HOST': db_conn.host,
+        'PORT': db_conn.port,
     }
 }
 

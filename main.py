@@ -3,6 +3,7 @@ import time
 from fake_user_agent.main import user_agent
 from bs4 import BeautifulSoup as BS
 import json
+import PullToDB
 
 URL = 'https://pikabu.ru'
 start_time = time.time()
@@ -56,15 +57,20 @@ def open_page(url: str = None, param: dict = None) -> str:
     return answer.text
 
 
-def save_json_file(not_clean_data: list[dict, ...] = None) -> None:
-    with open("result_not_clean.json", "w", encoding='utf-8') as file:
-        json.dump(not_clean_data, file, indent=4, ensure_ascii=False)
+def make_clean_data(not_clean_data: list[dict, ...] = None) -> list[dict, ...]:
     clean_data = []
     for elem in not_clean_data:
         if elem not in clean_data:
             clean_data.append(elem)
-            print(elem)
-            print("*" * 20)
+            # print(elem)
+            # print("*" * 20)
+    return clean_data
+
+def save_all_json_files(not_clean_data: list[dict, ...] = None) -> None:
+    with open("result_not_clean.json", "w", encoding='utf-8') as file:
+        json.dump(not_clean_data, file, indent=4, ensure_ascii=False)
+
+def save_clean_json_file(clean_data: list[dict, ...] = None) -> None:
     with open("result.json", "w", encoding='utf-8') as file:
         json.dump(list(clean_data), file, indent=4, ensure_ascii=False)
 
@@ -73,10 +79,12 @@ if __name__ == '__main__':
     all_text = []
     text = open_page(URL)
     last_page = int(find_last_page(text))
-    print(last_page)
-    for page in range(1, 50): #last_page):
+    print("Max page is -", last_page)
+    for page in range(1, last_page):
         html_text = open_page(URL, {"page": page})
         all_text.extend(get_my_data(html_text))
-        print(len(all_text))
-    save_json_file(all_text)
-    print(all_text)
+        print("page =", page, "posts taken =", len(all_text))
+    clean_text = make_clean_data(all_text)
+    save_clean_json_file(clean_text)
+    PullToDB.bd_insert(clean_text)
+    # print(all_text)
