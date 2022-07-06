@@ -19,7 +19,7 @@ def initial_bd():
 
         with connection.cursor() as cursor:
             cursor.execute(
-                """CREATE TABLE IF NOT EXISTS Posts(
+                """CREATE TABLE IF NOT EXISTS "Short_tales_posts" (
                     id serial PRIMARY KEY,
                     story_id integer,
                     href varchar,
@@ -63,7 +63,7 @@ def bd_insert(data):
         cursor = connection.cursor()
         extras.execute_values(cursor,
             """
-            INSERT INTO Posts (story_id, href, author, story_title, story_block)
+            INSERT INTO "Short_tales_posts" (story_id, href, author, story_title, story_block)
             VALUES %s ON CONFLICT DO NOTHING
             """, posts
         )
