@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from .models import Posts, Category
 
@@ -14,7 +14,8 @@ def index(request):
 
 def get_category(request, category_id):
     posts = Posts.objects.filter(category_id=category_id)
-    category = Category.objects.get(pk=category_id)
+    # category = Category.objects.get(pk=category_id)
+    category = get_object_or_404(Category, pk=category_id)
     return render(request, template_name='Short_tales/category.html',
                   context={'posts': posts, 'category': category, })
 

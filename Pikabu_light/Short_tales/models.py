@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 # Create your models here.
 class Posts(models.Model):
@@ -21,6 +22,9 @@ class Posts(models.Model):
 
 class Category(models.Model):
     title = models.CharField(max_length=50, db_index=True, verbose_name='Категория')
+
+    def get_absolute_url(self):
+        return reverse('category', kwargs={'category_id': self.pk})
 
     class Meta:
         verbose_name = 'Категория'
