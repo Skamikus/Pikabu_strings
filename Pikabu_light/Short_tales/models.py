@@ -4,8 +4,8 @@ from django.urls import reverse
 # Create your models here.
 class Posts(models.Model):
     id = models.AutoField(primary_key=True)
-    story_id = models.IntegerField(unique=True, verbose_name='id на сайте Pikabu')
-    href = models.CharField(max_length=255, verbose_name='Ссылка')
+    story_id = models.IntegerField(unique=True, verbose_name='id на сайте Pikabu', blank=True, null=True,)
+    href = models.CharField(max_length=255, verbose_name='Ссылка', blank=True)
     author = models.CharField(max_length=100, verbose_name='Автор')
     story_title = models.CharField(max_length=255, verbose_name='Заголовок')
     story_block = models.TextField(verbose_name='История')
@@ -29,7 +29,7 @@ class Category(models.Model):
     class Meta:
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
-        ordering = ['title']
+        ordering = ['id']
 
     def __str__(self):
         return self.title

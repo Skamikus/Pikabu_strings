@@ -1,7 +1,7 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from .models import Posts, Category
-
+from .forms import PostsForm
 
 def index(request):
     posts = Posts.objects.all()
@@ -19,6 +19,17 @@ def get_category(request, category_id):
     return render(request, template_name='Short_tales/category.html',
                   context={'posts': posts, 'category': category, })
 
+
+def add_post(request):
+    if request.method == 'POST':
+        form = PostsForm(request.POST)
+        if form.is_valid():
+            # print(form.cleaned_data)
+            Posts.objects.create(**form.cleaned_data)
+            return redirect('home')
+    else:
+        form = PostsForm()
+    return render(request, 'Short_tales/add_post.html', {'form': form})
 
 def test(request):
     return HttpResponse('<h1> Тестовая страница</h1>')
