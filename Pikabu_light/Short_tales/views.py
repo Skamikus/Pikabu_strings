@@ -8,7 +8,7 @@ def index(request):
     categories = Category.objects.all()
     context = {
         'posts': posts,
-        'title': 'Список постов',
+        'title': 'Все посты',
         'categories': categories,
     }
     return render(request, template_name='Short_tales/index.html', context=context)
