@@ -10,7 +10,9 @@ class HomePosts(ListView):
     model = Posts
     template_name = 'Short_tales/index.html'
     context_object_name = 'posts'
+    paginate_by = 10
     # extra_context = {'title': 'Главная'}
+
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -25,6 +27,7 @@ class CategoryPosts(ListView):
     model = Posts
     template_name = 'Short_tales/category.html'
     context_object_name = 'posts'
+    paginate_by = 10
     # extra_context = {'title': 'Главная'}
     allow_empty = False
 
