@@ -1,0 +1,20 @@
+{% extends 'base.html'%}
+
+{% block title %} {{ block.super }}/ {{ title}}{% endblock %}
+
+{% block content %}
+<h1> {{ Главная }}</h1>
+<div class="row">
+    {% for post in object_list %}
+    <div class="card mb-2">
+        <div class="card-body">
+            <h4 class="card-title">{{ post.story_title }}</h4>
+            <h6 class="card-subtitle mb-2 text-muted">{{ post.author }}</h6>
+            <p class="card-text">{{ post.story_block }}</p>
+            <h6 class="card-subtitle mb-2 text-muted">{{ post.date_in|date:"d.m.Y H:i" }}
+                <a href="{{ post.href }}" class="card-link"> Ссылка на оригинал</a></h6>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
