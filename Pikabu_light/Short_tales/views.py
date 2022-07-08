@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
-from django.views.generic import ListView
+from django.views.generic import ListView, CreateView
 
 from .models import Posts, Category
 from .forms import PostsForm
@@ -37,17 +37,10 @@ class CategoryPosts(ListView):
         return Posts.objects.filter(category=self.kwargs['category_id'], posted=True)
 
 
-def add_post(request):
-    if request.method == 'POST':
-        form = PostsForm(request.POST)
-        if form.is_valid():
-            # print(form.cleaned_data)
-            # Posts.objects.create(**form.cleaned_data)
-            form.save()
-            return redirect('home')
-    else:
-        form = PostsForm()
-    return render(request, 'Short_tales/add_post.html', {'form': form})
+class AddPosts(CreateView):
+    form_class = PostsForm
+    template_name = 'Short_tales/add_post.html'
+
 
 def test(request):
     return HttpResponse('<h1> Тестовая страница</h1>')
