@@ -21,21 +21,20 @@ class HomePosts(ListView):
         return Posts.objects.filter(posted=True)
 
 
-def index(request):
-    posts = Posts.objects.all()
-    context = {
-        'posts': posts,
-        'title': 'Все посты',
-    }
-    return render(request, template_name='Short_tales/index.html', context=context)
+class CategoryPosts(ListView):
+    model = Posts
+    template_name = 'Short_tales/category.html'
+    context_object_name = 'posts'
+    # extra_context = {'title': 'Главная'}
+    allow_empty = False
 
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['category'] = Category.objects.get(pk=self.kwargs['category_id'])
+        return context
 
-def get_category(request, category_id):
-    posts = Posts.objects.filter(category_id=category_id)
-    # category = Category.objects.get(pk=category_id)
-    category = get_object_or_404(Category, pk=category_id)
-    return render(request, template_name='Short_tales/category.html',
-                  context={'posts': posts, 'category': category, })
+    def get_queryset(self):
+        return Posts.objects.filter(category=self.kwargs['category_id'], posted=True)
 
 
 def add_post(request):
