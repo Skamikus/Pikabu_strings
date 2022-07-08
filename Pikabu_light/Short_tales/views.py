@@ -25,7 +25,8 @@ def add_post(request):
         form = PostsForm(request.POST)
         if form.is_valid():
             # print(form.cleaned_data)
-            Posts.objects.create(**form.cleaned_data)
+            # Posts.objects.create(**form.cleaned_data)
+            form.save()
             return redirect('home')
     else:
         form = PostsForm()

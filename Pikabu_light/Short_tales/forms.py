@@ -1,14 +1,16 @@
 from django import forms
-from .models import Category
+from .models import Posts
 
 
-class PostsForm(forms.Form):
-    href = forms.CharField(max_length=255, label='Ссылка на ресурс', required=False,
-                           widget=forms.TextInput(attrs={"class": "form-control"}))
-    author = forms.CharField(max_length=100, label='Автор', widget=forms.TextInput(attrs={"class": "form-control"}))
-    story_title = forms.CharField(max_length=255, label='Заголовок поста',
-                                  widget=forms.TextInput(attrs={"class": "form-control"}))
-    story_block = forms.CharField(label='Текст поста', widget=forms.Textarea(attrs={"class": "form-control"}))
-    posted = forms.BooleanField(label='Публикация', initial=True, required=False)
-    category = forms.ModelChoiceField(queryset=Category.objects.all(), empty_label=None, label='Раздел',
-                                      widget=forms.Select(attrs={"class": "form-control"}))
+class PostsForm(forms.ModelForm):
+    class Meta:
+        model = Posts
+        # fields = '__all__'
+        fields = ['href', 'author', 'story_title', 'story_block', 'posted', 'category']
+        widgets = {
+            'href': forms.TextInput(attrs={'class': 'form-control'}),
+            'author': forms.TextInput(attrs={'class': 'form-control'}),
+            'story_title': forms.TextInput(attrs={'class': 'form-control'}),
+            'story_block': forms.Textarea(attrs={'class': 'form-control'}),
+            'category': forms.Select(attrs={'class': 'form-control'}, choices='Свежее'),
+        }
