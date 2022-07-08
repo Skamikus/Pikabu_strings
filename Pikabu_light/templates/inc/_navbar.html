@@ -16,6 +16,9 @@
                 {% endfor %}
                 <li class="nav-item"><a class="nav-link" href="{% url 'add_post' %}">Добавить новость</a></li>
             </ul>
+            <span class="navbar-text">
+                <a href="{% url 'login' %}">Авторизация</a> / <a href="{% url 'register' %}">Регистрация</a>
+            </span>
         </div>
     </div>
 </nav>
