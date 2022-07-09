@@ -14,10 +14,17 @@
                 <li class="nav-item"><a class="nav-link" href="{{ categor.get_absolute_url }}">{{ categor.title }}</a>
                 </li>
                 {% endfor %}
+                {% if request.user.is_authenticated %}
                 <li class="nav-item"><a class="nav-link" href="{% url 'add_post' %}">Добавить новость</a></li>
+                {% endif %}
             </ul>
             <span class="navbar-text">
-                <a href="{% url 'login' %}">Авторизация</a> / <a href="{% url 'register' %}">Регистрация</a>
+                {% if request.user.is_authenticated %}
+                    Приветствуем, {{ user.username }} / <a href="{% url 'logout' %}">Выход</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Авторизация</a> / <a href="{% url 'register' %}">Регистрация</a>
+                {% endif %}
+
             </span>
         </div>
     </div>
