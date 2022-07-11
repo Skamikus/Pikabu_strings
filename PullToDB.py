@@ -58,16 +58,16 @@ def _initial_bd():
             print("[INFO] PostgreSQL connection closed")
 
 
-def _prepare_data(data, category):
+def _prepare_data(data):
     rezult = []
     for each in data:
         rezult.append(
-            (each["news_id"], each["href"], each["author"], each["story_title"], each["story_block"], category))
+            (each["news_id"], each["href"], each["author"], each["story_title"], each["story_block"], each["category"]))
     return rezult
 
 
-def bd_insert(data: list[dict, ...], category: int = 1) -> None:
-    posts = _prepare_data(data, category)
+def bd_insert(data: list[dict, ...]) -> None:
+    posts = _prepare_data(data)
     try:
         connection = psycopg2.connect(
             host=db_conn.host,
