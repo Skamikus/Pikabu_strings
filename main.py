@@ -5,7 +5,10 @@ from bs4 import BeautifulSoup as BS
 import json
 import PullToDB
 
-URL = 'https://pikabu.ru'
+URLS = {1: 'https://pikabu.ru/new',
+        2: 'https://pikabu.ru',
+        3: 'https://pikabu.ru/best',
+        }
 start_time = time.time()
 
 
@@ -38,12 +41,11 @@ def get_my_data(html=None):
                 one_story_data['href'] = story.find(class_="story__title").find("a").get("href")
                 one_story_data["author"] = story.find(class_="story__user-link user__nick").get("data-name")
                 one_story_data['story_title'] = story.find(class_="story__title").text
-                one_story_data['story_block'] = story.find(class_="story-block_type_text").text
+                one_story_data['story_block'] = story.find(class_="story-block_type_text").get_text('\n')
                 all_stories.append(one_story_data)
-    except Exception:
-        print("Произошла ошибка при парсинге")
+    except Exception as err:
+        print("Произошла ошибка при парсинге", err)
     return all_stories
-
 
 def open_page(url: str = None, param: dict = None) -> str:
     ua = user_agent()
@@ -66,25 +68,29 @@ def make_clean_data(not_clean_data: list[dict, ...] = None) -> list[dict, ...]:
             # print("*" * 20)
     return clean_data
 
-def save_all_json_files(not_clean_data: list[dict, ...] = None) -> None:
-    with open("result_not_clean.json", "w", encoding='utf-8') as file:
-        json.dump(not_clean_data, file, indent=4, ensure_ascii=False)
-
-def save_clean_json_file(clean_data: list[dict, ...] = None) -> None:
-    with open("result.json", "w", encoding='utf-8') as file:
+def save_json_file(clean_data: list[dict, ...] = None, category: int = 1) -> None:
+    filename = "result_"+ str(category)+ ".json"
+    with open(filename, "w", encoding='utf-8') as file:
         json.dump(list(clean_data), file, indent=4, ensure_ascii=False)
+
+def main():
+    for category, url in URLS.items():
+        all_text = []
+        print("Категория N -", category, " - ", url)
+        text = open_page(url)
+        last_page = int(find_last_page(text))
+        print("Max page is -", last_page)
+        for page in range(30, 50):
+            html_text = open_page(url, {"page": page})
+            all_text.extend(get_my_data(html_text))
+            print("page =", page, "posts taken =", len(all_text))
+        clean_text = make_clean_data(all_text)
+        save_json_file(clean_text, category)
+        PullToDB.bd_insert(clean_text, category)
+        # print(all_text)
 
 
 if __name__ == '__main__':
-    all_text = []
-    text = open_page(URL)
-    last_page = int(find_last_page(text))
-    print("Max page is -", last_page)
-    for page in range(1, last_page):
-        html_text = open_page(URL, {"page": page})
-        all_text.extend(get_my_data(html_text))
-        print("page =", page, "posts taken =", len(all_text))
-    clean_text = make_clean_data(all_text)
-    save_clean_json_file(clean_text)
-    PullToDB.bd_insert(clean_text)
-    # print(all_text)
+    main()
+
+

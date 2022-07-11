@@ -10,7 +10,7 @@ class Posts(models.Model):
     author = models.CharField(max_length=100, verbose_name='Автор')
     story_title = models.CharField(max_length=255, verbose_name='Заголовок')
     story_block = models.TextField(verbose_name='История')
-    date_in = models.DateTimeField(blank=False, auto_now_add=True, verbose_name='Дата создания')
+    date_in = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     date_change = models.DateTimeField(auto_now=True, blank=True, verbose_name='Дата изменения')
     posted = models.BooleanField(default=True, verbose_name='Публикация')
     category = models.ForeignKey('Category', on_delete=models.SET_NULL, blank=True, null=True, default='1',

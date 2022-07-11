@@ -2,7 +2,8 @@ import psycopg2
 import db_conn
 from psycopg2 import extras
 
-def initial_bd():
+
+def _initial_bd():
     try:
         connection = psycopg2.connect(
             host=db_conn.host,
@@ -19,7 +20,10 @@ def initial_bd():
 
         with connection.cursor() as cursor:
             cursor.execute(
-                """CREATE TABLE IF NOT EXISTS "Short_tales_posts" (
+                """CREATE TABLE IF NOT EXISTS "Short_tales_category" (
+                    id serial PRIMARY KEY,
+                    title varchar(50));
+                    CREATE TABLE IF NOT EXISTS "Short_tales_posts" (
                     id serial PRIMARY KEY,
                     story_id integer,
                     href varchar,
@@ -28,11 +32,21 @@ def initial_bd():
                     story_block text,
                     date_in TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                     date_change TIMESTAMP,
-                    posted bool DEFAULT False,
+                    posted bool DEFAULT True,
+                    category_id integer REFERENCES "Short_tales_category" (id) ON DELETE SET NULL,
                     UNIQUE(story_id)
-                );              
+                    );
                 """
             )
+            connection.commit()
+        with connection.cursor() as cursor:
+            cursor.execute("""
+            INSERT INTO "Short_tales_category" (id, title) VALUES 
+            (1, 'Свежее'),
+            (2, 'Горячее'),
+            (3, 'Лучшее')
+            ON CONFLICT (id) DO NOTHING;  
+            """)
             connection.commit()
             print("[INFO] BD exist now")
 
@@ -44,15 +58,16 @@ def initial_bd():
             print("[INFO] PostgreSQL connection closed")
 
 
-def prepare_data(data):
+def _prepare_data(data, category):
     rezult = []
     for each in data:
-        rezult.append((each["news_id"], each["href"], each["author"], each["story_title"], each["story_block"]))
+        rezult.append(
+            (each["news_id"], each["href"], each["author"], each["story_title"], each["story_block"], category))
     return rezult
 
 
-def bd_insert(data):
-    posts = prepare_data(data)
+def bd_insert(data: list[dict, ...], category: int = 1) -> None:
+    posts = _prepare_data(data, category)
     try:
         connection = psycopg2.connect(
             host=db_conn.host,
@@ -62,35 +77,21 @@ def bd_insert(data):
         )
         cursor = connection.cursor()
         extras.execute_values(cursor,
-            """
-            INSERT INTO "Short_tales_posts" (story_id, href, author, story_title, story_block)
-            VALUES %s ON CONFLICT DO NOTHING
-            """, posts
-        )
+                              """
+                              INSERT INTO "Short_tales_posts" (story_id, href, author, story_title, story_block, category_id)
+                              VALUES %s ON CONFLICT DO NOTHING
+                              """, posts
+                              )
         connection.commit()
         cursor.close()
+        print("[INFO] PostgreSQL work completed successfully")
     except Exception as _ex:
         print("[INFO] Error while working with PostgreSQL", _ex)
     finally:
         if connection:
             connection.close()
-            print("[INFO] PostgreSQL connection closed")
+            # print("[INFO] PostgreSQL connection closed")
+
 
 if __name__ == '__main__':
-    initial_bd()
-    # was = [
-    # {
-    #     "news_id": "9234356",
-    #     "href": "https://pikabu.ru/story/rossiya_snova_grubo_narushila__spektakl_v_dvukh_deystviyakh_9234356",
-    #     "author": "zigfrid.n",
-    #     "story_title": "\"Россия снова грубо нарушила!\" - спектакль в двух ",
-    #     "story_block": "Действие первое - Россия принимает" },
-    # {
-    #     "news_id": "9234356",
-    #     "href": "https://pikabu.ru/story/listaya_staryie_stranitsyi__9231788",
-    #     "author": "deputy2022",
-    #     "story_title": "Листая старые страницы ...",
-    #     "story_block": "- Мама, а слон в зоопарке чей?- Государственный.- Значит и мой немножечко."
-    # },]
-    # # print(prepare_data(was))
-    # bd_insert(was)
+    _initial_bd()
