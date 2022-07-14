@@ -5,4 +5,7 @@ Pikabu_light/db.sqlite3
 /Lib/
 /Scripts/
 /.idea/
-/idea/
+/.idea
+/result_all.json
+/with_selenium.py
+/.mypy_cache/
